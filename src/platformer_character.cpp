@@ -31,12 +31,26 @@ PlatformerCharacter::PlatformerCharacter(b2World & world)
 		0.f);
 	foot.shape = &foot_shape;
 	contactData.contactDataType = ContactDataType::PLATFORM_CHARACTER;
+	contactData.typeContact = TypeContact::FOOT;
 	contactData.data = this;
 	foot.userData = &contactData;
 
+	b2FixtureDef sides;
+	b2PolygonShape sides_shape;
+	sides.isSensor = true;
+	sides_shape.SetAsBox(
+		pixel2meter(size.x + 2.f) /2, pixel2meter(2.f) / 2.f, // Taille)
+		b2Vec2(0, 0), //Position (A partir du centre)
+		0.f); //Angle
+	sides.shape = &sides_shape;
+	contactData.contactDataType = ContactDataType::PLATFORM_CHARACTER;
+	contactData.typeContact = TypeContact::WALL;
+	contactData.data = this;
+	sides.userData = &contactData;
 
 	body->CreateFixture(&box);
 	body->CreateFixture(&foot);
+	body->CreateFixture(&sides);
 }
 
 PlatformerCharacter::~PlatformerCharacter()
@@ -69,3 +83,16 @@ void PlatformerCharacter::leave_ground()
 {
 	foot--;
 }
+
+void PlatformerCharacter::touch_wall(bool isLeftSide)
+{
+	wall++;
+	isLeftSide ? isTouchingLeftWall = true: isTouchingLeftWall = false;
+}
+
+void PlatformerCharacter::leave_wall()
+{
+	wall--;
+}
+
+

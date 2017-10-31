@@ -18,9 +18,16 @@ enum class ContactDataType
 	PLATFORM
 };
 
+enum class TypeContact
+{
+	FOOT,
+	WALL
+};
+
 struct ContactData
 {
 	void* data;
+	TypeContact typeContact;
 	ContactDataType contactDataType;
 };
 

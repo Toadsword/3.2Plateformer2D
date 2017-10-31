@@ -14,8 +14,12 @@ public:
 	void draw(sf::RenderWindow&);
 	void touch_ground();
 	void leave_ground();
+	void touch_wall(bool isLeftSide);
+	void leave_wall();
 private:
 	int foot = 0;
+	int wall = 0;
+	bool isTouchingLeftWall = true;
 	b2Body* body;
 	sf::RectangleShape rect;
 	sf::Vector2f center_position = sf::Vector2f(400.f, 300.f);

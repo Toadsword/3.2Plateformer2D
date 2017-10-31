@@ -29,16 +29,15 @@ class MyContactListener : public b2ContactListener
 		Platform* platform = nullptr;
 		if (contact->GetFixtureA()->GetUserData() != NULL)
 		{
-			
 			CheckUserData(contact->GetFixtureA()->GetUserData(), &pChar, &platform);
 		}
 		if (contact->GetFixtureB()->GetUserData() != NULL)
 		{
 			CheckUserData(contact->GetFixtureB()->GetUserData(), &pChar, &platform);
-
 		}
 		if (platform != nullptr && pChar != nullptr)
 		{
+			std::cout << "ENTER CONTACT\n";
 			pChar->touch_ground();
 		}
 
@@ -58,6 +57,7 @@ class MyContactListener : public b2ContactListener
 		}
 		if (platform != nullptr && pChar != nullptr)
 		{
+			std::cout << "LEAVE CONTACT\n";
 			pChar->leave_ground();
 		}
 	}
@@ -99,6 +99,7 @@ int main()
 	{
 		bool jump_button = false;
 		float move_axis = 0.0f;
+
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 		{
 			move_axis -= 1.0f;
@@ -107,7 +108,7 @@ int main()
 		{
 			move_axis += 1.0f;
 		}
-		myWorld.Step(timeStep, velocityIterations, positionIterations);
+		
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
@@ -125,7 +126,8 @@ int main()
 		}
 		
 		character.update(move_axis, jump_button);
-		
+
+		myWorld.Step(timeStep, velocityIterations, positionIterations);
 		window.clear();
 		character.draw(window);
 		for (Platform& platform : platforms)
