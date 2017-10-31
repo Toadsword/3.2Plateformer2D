@@ -30,27 +30,39 @@ PlatformerCharacter::PlatformerCharacter(b2World & world)
 		b2Vec2(0.f, pixel2meter(size.y)/2), 
 		0.f);
 	foot.shape = &foot_shape;
-	contactData.contactDataType = ContactDataType::PLATFORM_CHARACTER;
-	contactData.typeContact = TypeContact::FOOT;
+	contactData.contactDataType = ContactDataType::PLATFORM_CHARACTER_GROUND;
 	contactData.data = this;
 	foot.userData = &contactData;
 
-	b2FixtureDef sides;
-	b2PolygonShape sides_shape;
-	sides.isSensor = true;
-	sides_shape.SetAsBox(
-		pixel2meter(size.x + 2.f) /2, pixel2meter(2.f) / 2.f, // Taille)
-		b2Vec2(0, 0), //Position (A partir du centre)
+	// TEST IF RIGHT WALL
+	b2FixtureDef left_side;
+	b2PolygonShape left_side_shape;
+	left_side.isSensor = true;
+	left_side_shape.SetAsBox(
+		pixel2meter(2.f) /2, pixel2meter(size.y-4.f) / 2.f, // Taille)
+		b2Vec2(-pixel2meter(size.x) / 2, 0), //Position (A partir du centre)
 		0.f); //Angle
-	sides.shape = &sides_shape;
-	contactData.contactDataType = ContactDataType::PLATFORM_CHARACTER;
-	contactData.typeContact = TypeContact::WALL;
-	contactData.data = this;
-	sides.userData = &contactData;
+	left_side.shape = &left_side_shape;
+	contactDataLeftWall.contactDataType = ContactDataType::PLATFORM_CHARACTER_LEFT_WALL;
+	contactDataLeftWall.data = this;
+	left_side.userData = &contactDataLeftWall;
+
+	b2FixtureDef right_side;
+	b2PolygonShape right_side_shape;
+	right_side.isSensor = true;
+	right_side_shape.SetAsBox(
+		pixel2meter(2.f) / 2, pixel2meter(size.y - 4.f) / 2.f, // Taille)
+		b2Vec2(pixel2meter(size.x) / 2, 0), //Position (A partir du centre)
+		0.f); //Angle
+	right_side.shape = &right_side_shape;
+	contactDataRightWall.contactDataType = ContactDataType::PLATFORM_CHARACTER_RIGHT_WALL;
+	contactDataRightWall.data = this;
+	right_side.userData = &contactDataRightWall;
 
 	body->CreateFixture(&box);
 	body->CreateFixture(&foot);
-	body->CreateFixture(&sides);
+	body->CreateFixture(&left_side);
+	body->CreateFixture(&right_side);
 }
 
 PlatformerCharacter::~PlatformerCharacter()
@@ -65,6 +77,15 @@ void PlatformerCharacter::update(float move_axis, bool jump_button)
 	{
 		body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x, -jump_speed));
 	}
+
+
+	// Tu gère ici le saut, amuse toi bien !
+	// Foot > 0 = touche le sol
+	// Wall > 0 = touche le mur
+	// isTouchingLeftWall = Tout est dit
+	// Oui, il peut toucher les deux en même temps :3
+
+
 	center_position = meter2pixel(body->GetPosition());
 	rect.setPosition(center_position - size / 2.f);
 }

@@ -7,7 +7,7 @@
 
 #include <Box2D/Box2D.h>
 
-void CheckUserData(void* userData, PlatformerCharacter** pCharPtr, Platform** platformPtr)
+void CheckUserData(void* userData, PlatformerCharacter** pCharPtr, Platform** platformPtr, bool& is_touching_wall, bool& is_touching_left_wall)
 {
 	ContactData* data = static_cast<ContactData*>(userData);
 	switch (data->contactDataType)
@@ -15,7 +15,12 @@ void CheckUserData(void* userData, PlatformerCharacter** pCharPtr, Platform** pl
 	case ContactDataType::PLATFORM:
 		*platformPtr = static_cast<Platform*>(data->data);
 		break;
-	case ContactDataType::PLATFORM_CHARACTER:
+
+	case ContactDataType::PLATFORM_CHARACTER_LEFT_WALL:
+		is_touching_left_wall = true;
+	case ContactDataType::PLATFORM_CHARACTER_RIGHT_WALL:
+		is_touching_wall = true;
+	case ContactDataType::PLATFORM_CHARACTER_GROUND:
 		*pCharPtr = static_cast<PlatformerCharacter*>(data->data);
 		break;
 	}
@@ -27,38 +32,60 @@ class MyContactListener : public b2ContactListener
 	{
 		PlatformerCharacter* pChar = nullptr;
 		Platform* platform = nullptr;
+		bool is_touching_wall = false;
+		bool is_touching_left_wall = false;
 		if (contact->GetFixtureA()->GetUserData() != NULL)
 		{
-			CheckUserData(contact->GetFixtureA()->GetUserData(), &pChar, &platform);
+			CheckUserData(contact->GetFixtureA()->GetUserData(), &pChar, &platform, is_touching_wall, is_touching_left_wall);
 		}
 		if (contact->GetFixtureB()->GetUserData() != NULL)
 		{
-			CheckUserData(contact->GetFixtureB()->GetUserData(), &pChar, &platform);
+			CheckUserData(contact->GetFixtureB()->GetUserData(), &pChar, &platform, is_touching_wall, is_touching_left_wall);
 		}
 		if (platform != nullptr && pChar != nullptr)
 		{
-			std::cout << "ENTER CONTACT\n";
-			pChar->touch_ground();
-		}
+			std::cout << "ENTER CONTACT :";
 
+			if (is_touching_wall) {
+				is_touching_left_wall ? std::cout << " LEFT " : std::cout << " RIGHT";
+				std::cout << "WALL\n";
+
+				pChar->touch_wall(is_touching_left_wall);
+			}
+			else {
+				std::cout << "GROUND\n";
+				pChar->touch_ground();
+			}
+		}
 	}
 
 	void EndContact(b2Contact* contact) {
 
 		PlatformerCharacter* pChar = nullptr;
 		Platform* platform = nullptr;
+		bool is_touching_wall = false;
+		bool is_touching_left_wall = false;
 		if (contact->GetFixtureA()->GetUserData() != NULL)
 		{
-			CheckUserData(contact->GetFixtureA()->GetUserData(), &pChar, &platform);
+			CheckUserData(contact->GetFixtureA()->GetUserData(), &pChar, &platform, is_touching_wall, is_touching_left_wall);
 		}
 		if (contact->GetFixtureB()->GetUserData() != NULL)
 		{
-			CheckUserData(contact->GetFixtureB()->GetUserData(), &pChar, &platform);
+			CheckUserData(contact->GetFixtureB()->GetUserData(), &pChar, &platform, is_touching_wall, is_touching_left_wall);
 		}
 		if (platform != nullptr && pChar != nullptr)
 		{
-			std::cout << "LEAVE CONTACT\n";
-			pChar->leave_ground();
+			std::cout << "LEAVE CONTACT :";
+			if (is_touching_wall) {
+				is_touching_left_wall ? std::cout << " LEFT " : std::cout << " RIGHT";
+				std::cout << "WALL\n";
+
+				pChar->touch_wall(is_touching_left_wall);
+			}
+			else {
+				std::cout << "GROUND\n";
+				pChar->leave_ground();
+			}
 		}
 	}
 };

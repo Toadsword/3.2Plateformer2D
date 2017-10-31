@@ -14,20 +14,15 @@ sf::Vector2f meter2pixel(b2Vec2 meters);
 
 enum class ContactDataType
 {
-	PLATFORM_CHARACTER,
+	PLATFORM_CHARACTER_GROUND,
+	PLATFORM_CHARACTER_LEFT_WALL,
+	PLATFORM_CHARACTER_RIGHT_WALL,
 	PLATFORM
-};
-
-enum class TypeContact
-{
-	FOOT,
-	WALL
 };
 
 struct ContactData
 {
 	void* data;
-	TypeContact typeContact;
 	ContactDataType contactDataType;
 };
 
