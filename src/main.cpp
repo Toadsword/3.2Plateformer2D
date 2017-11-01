@@ -80,7 +80,7 @@ class MyContactListener : public b2ContactListener
 				is_touching_left_wall ? std::cout << " LEFT " : std::cout << " RIGHT";
 				std::cout << "WALL\n";
 
-				pChar->touch_wall(is_touching_left_wall);
+				pChar->leave_wall();
 			}
 			else {
 				std::cout << "GROUND\n";
