@@ -78,14 +78,14 @@ void PlatformerCharacter::update(float move_axis, bool jump_button)
 		body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x, -jump_speed));
 	}
 
-	if( wall>0 && foot == 0 && jump_button)
+	if( wall > 0 && foot == 0 && jump_button)
 	{
-		body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x, -jump_speed));
+		if(isTouchingLeftWall)
+			body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x + wall_jump_speed, -jump_speed));
+		else
+			body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x - wall_jump_speed, -jump_speed));
 	}
-	else
-	{
-		wall < 0 && foot == 0 && jump_button;
-	}
+
 	center_position = meter2pixel(body->GetPosition());
 	rect.setPosition(center_position - size / 2.f);
 }

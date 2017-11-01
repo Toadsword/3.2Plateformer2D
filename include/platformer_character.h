@@ -26,6 +26,7 @@ private:
 	sf::Vector2f size = sf::Vector2f(64.f,64.f);
 	const float walk_speed = 5.0f;
 	const float jump_speed = 10.f;
+	const float wall_jump_speed = 25.f;
 	ContactData contactData;
 	ContactData contactDataLeftWall;
 	ContactData contactDataRightWall;
